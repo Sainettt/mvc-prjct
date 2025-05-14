@@ -13,6 +13,7 @@ app.set('layout', 'layout')
 app.use(expressLayouts)
 
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', eventRouter)
 app.use('/', userRouter)
