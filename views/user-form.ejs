@@ -5,3 +5,9 @@
   <input name="email" placeholder="Email" required />
   <button type="submit">Add</button>
 </form>
+
+<% if (errorMessage) { %>
+  <div class="error-message" style="color: red;">
+    <p><%= errorMessage %></p>
+  </div>
+<% } %>

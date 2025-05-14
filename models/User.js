@@ -1,13 +1,27 @@
 const { getDataBase } = require('../config/db')
+const { normalizeInput } = require('../utlis/normalizeInput')
 const COLLECTION_NAME = 'users'
 
 class User {
   static async add(userName, email) {
     const db = getDataBase()
+
+    userName = normalizeInput(userName)
+    email = normalizeInput(email)
+
+    const existingUser = await db.collection(COLLECTION_NAME).findOne({
+      $or: [{ userName }, { email }],
+    })
+
+    if (existingUser) {
+      return existingUser
+    }
+
     const result = await db.collection(COLLECTION_NAME).insertOne({
       userName,
       email,
     })
+
     return result
   }
 

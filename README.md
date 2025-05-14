@@ -25,6 +25,16 @@ Aplikacja webowa umożliwiająca tworzenie, edytowanie oraz zarządzanie wydarze
 - Node.js 
 - MongoDB 
 
+## Biblioteki
+
+- `dotenv`
+- `express` 
+- `body-parser` 
+- `ejs` 
+- `express-ejs-layouts`
+- `mongodb` 
+- `nodemon` (dev)
+
 ## Instalacja
 
 ```   bash

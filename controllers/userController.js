@@ -1,6 +1,7 @@
 const User = require('../models/User')
 const { getDataBase } = require('../config/db')
-const {STATUS_CODE} = require('../constans/statusCode')
+const { normalizeInput } = require('../utlis/normalizeInput')
+const { STATUS_CODE } = require('../constans/statusCode')
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -13,7 +14,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.renderAddUserForm = (req, res) => {
   const eventName = req.query.event || ''
-  res.render('user-form', { title: 'Add User', eventName })
+  res.render('user-form', { title: 'Add User', eventName, errorMessage: null })
 }
 
 exports.addNewUser = async (req, res) => {
@@ -21,15 +22,39 @@ exports.addNewUser = async (req, res) => {
     const { userName, email, eventName } = req.body
     const db = getDataBase()
 
+    const normalizedUserName = normalizeInput(userName)
+
+    const event = await db.collection('events').findOne({ eventName })
+
+    if (!event) {
+      return res.status(404).send('Event not found')
+    }
+
+    if (event.invitedUsers.includes(normalizedUserName)) {
+      return res.render('user-form', {
+        title: 'Add User',
+        eventName,
+        errorMessage: 'User already invited to this event',
+      })
+    }
+
     await User.add(userName, email)
 
     await db
       .collection('events')
-      .updateOne({ eventName }, { $addToSet: { invitedUsers: userName } })
+      .updateOne(
+        { eventName },
+        { $addToSet: { invitedUsers: normalizedUserName } }
+      )
 
     res.redirect(`/users/${eventName}`)
   } catch (error) {
-    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error adding new user')
+    console.error(error)
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).render('user-form', {
+      title: 'Add User',
+      eventName: req.body.eventName,
+      errorMessage: 'Error adding user',
+    })
   }
 }
 
@@ -58,7 +83,9 @@ exports.getUsersByEvent = async (req, res) => {
       eventName,
     })
   } catch (error) {
-    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error fetching users for event')
+    res
+      .status(STATUS_CODE.INTERNAL_SERVER_ERROR)
+      .send('Error fetching users for event')
   }
 }
 
