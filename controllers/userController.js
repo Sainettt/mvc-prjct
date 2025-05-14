@@ -1,13 +1,13 @@
 const User = require('../models/User')
 const { getDataBase } = require('../config/db')
-
+const {STATUS_CODE} = require('../constans/statusCode')
 
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.getAll(req.body.eventName)
     res.render('event-users', { title: 'All Users', users })
   } catch (error) {
-    res.status(500).send('Error fetching users')
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error fetching users')
   }
 }
 
@@ -29,7 +29,7 @@ exports.addNewUser = async (req, res) => {
 
     res.redirect(`/users/${eventName}`)
   } catch (error) {
-    res.status(500).send('Error adding new user')
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error adding new user')
   }
 }
 
@@ -58,7 +58,7 @@ exports.getUsersByEvent = async (req, res) => {
       eventName,
     })
   } catch (error) {
-    res.status(500).send('Error fetching users for event')
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error fetching users for event')
   }
 }
 
@@ -78,6 +78,6 @@ exports.deleteUser = async (req, res) => {
 
     res.redirect(`/users/${req.body.eventName}`)
   } catch (error) {
-    res.status(500).send('Error deleting user')
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error deleting user')
   }
 }
