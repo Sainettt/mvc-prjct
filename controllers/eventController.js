@@ -15,21 +15,33 @@ exports.renderNewEventForm = (req, res) => {
     title: 'New Event',
     formAction: '/event/new',
     event: null,
+    errorMessage: null,
   })
 }
 
 exports.addNewEvent = async (req, res) => {
   try {
     const { eventName, eventDate, eventLocation } = req.body
+
     await Event.add({
       eventName,
       eventDate,
       eventLocation,
       invitedUsers: [],
     })
+
     res.redirect('/events')
   } catch (error) {
-    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error adding new event')
+    res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).render('event-form', {
+      title: 'New Event',
+      formAction: '/event/new',
+      event: {
+        eventName: req.body.eventName,
+        eventDate: req.body.eventDate,
+        eventLocation: req.body.eventLocation,
+      },
+      errorMessage: error.message || 'Error adding new event',
+    })
   }
 }
 
@@ -45,6 +57,7 @@ exports.renderEditEventForm = async (req, res) => {
       title: 'Edit Event',
       formAction: `/event/edit/${name}`,
       event,
+      errorMessage: null,
     })
   } catch (error) {
     res.status(STATUS_CODE.INTERNAL_SERVER_ERROR).send('Error fetching event for editing')

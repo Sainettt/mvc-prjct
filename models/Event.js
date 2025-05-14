@@ -3,16 +3,22 @@ const { getDataBase } = require('../config/db')
 const COLLECTION_NAME = 'events'
 
 class Event {
-
   static async add(data) {
     const db = getDataBase()
     const { eventName, eventDate, eventLocation, invitedUsers } = data
+
+    const existing = await db.collection(COLLECTION_NAME).findOne({ eventName })
+    if (existing) {
+      throw new Error('Event with this name already exists')
+    }
+
     const result = await db.collection(COLLECTION_NAME).insertOne({
       eventName,
       eventDate,
       eventLocation,
       invitedUsers,
     })
+
     return result
   }
 
@@ -29,7 +35,7 @@ class Event {
       .updateOne({ eventName: name }, { $set: updatedData })
     return result
   }
-  
+
   static async delete(eventName) {
     const db = getDataBase()
 
@@ -39,12 +45,21 @@ class Event {
       throw new Error('Event not found')
     }
 
-    if (event.invitedUsers && event.invitedUsers.length > 0) {
-      await db.collection('users').deleteMany({
-        userName: { $in: event.invitedUsers },
-      })
-    }
+    const invitedUsers = event.invitedUsers || []
 
+    for (const userName of invitedUsers) {
+      const otherEvents = await db
+        .collection(COLLECTION_NAME)
+        .find({
+          eventName: { $ne: eventName },
+          invitedUsers: userName,
+        })
+        .toArray()
+
+      if (otherEvents.length === 0) {
+        await db.collection('users').deleteOne({ userName })
+      }
+    }
     const result = await db.collection(COLLECTION_NAME).deleteOne({ eventName })
     return result
   }

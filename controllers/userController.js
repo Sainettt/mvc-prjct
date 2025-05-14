@@ -30,7 +30,7 @@ exports.addNewUser = async (req, res) => {
       return res.status(404).send('Event not found')
     }
 
-    if (event.invitedUsers.includes(normalizedUserName)) {
+    if (event.invitedUsers.includes(normalizedUserName) || event.invitedUsers.includes(email)) {
       return res.render('user-form', {
         title: 'Add User',
         eventName,
