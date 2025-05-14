@@ -1,8 +1,6 @@
-const PORT = 3000
-const DB_USER = 'danyilfiut'
-const DB_PASS = 'danyilfiut'
 module.exports = {
-  PORT,
-  DB_USER,
-  DB_PASS,
-}
+  PORT: process.env.PORT || 3000,
+  DB_USER: process.env.DB_USER,    
+  DB_PASS: process.env.DB_PASS,    
+};
+
