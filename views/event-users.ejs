@@ -1,0 +1,18 @@
+<h1><%= eventName %> – Invited Users</h1>
+
+<% if (users.length === 0) { %>
+<p>No users invited to this event yet.</p>
+<% } else { %> <% users.forEach(user => { %>
+<div class="card">
+  <strong><%= user.userName %></strong> – <%= user.email %>
+  <form method="POST" action="/user/delete">
+    <input type="hidden" name="userName" value="<%= user.userName %>" />
+    <input type="hidden" name="eventName" value="<%= eventName %>" />
+    <button>Delete</button>
+  </form>
+</div>
+<% }) %> <% } %>
+
+<a href="/user/new?event=<%= eventName %>">
+  <button>Add New User</button>
+</a>

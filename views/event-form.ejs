@@ -1,0 +1,22 @@
+<h1>Event</h1>
+<form method="POST" action="<%= formAction %>">
+  <input
+    name="eventName"
+    placeholder="Event name"
+    value="<%= event?.eventName || '' %>"
+    required
+  />
+  <input
+    name="eventDate"
+    placeholder="Event date"
+    value="<%= event?.eventDate || '' %>"
+    required
+  />
+  <input
+    name="eventLocation"
+    placeholder="Location"
+    value="<%= event?.eventLocation || '' %>"
+    required
+  />
+  <button type="submit">Save</button>
+</form>

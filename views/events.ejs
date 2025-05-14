@@ -1,0 +1,29 @@
+<h1>List</h1>
+<% events.forEach(event => { %>
+<div class="card">
+  <strong><%= event.eventName %></strong> — <%= event.eventDate %> — <%=
+  event.eventLocation %> — <%= event.invitedUsers.length %>
+  <div>
+    <form method="GET" action="/user/new">
+      <input
+        type="hidden"
+        name="event"
+        value="<%= event.eventName %>"
+      /><button>Add user</button>
+    </form>
+    <form method="GET" action="/event/edit/<%= event.eventName %>">
+      <button>Edit event</button>
+    </form>
+    <form method="GET" action="/users/<%= event.eventName %>">
+      <button>List users</button>
+    </form>
+    <form method="POST" action="/event/delete">
+      <input
+        type="hidden"
+        name="eventName"
+        value="<%= event.eventName %>"
+      /><button>Delete</button>
+    </form>
+  </div>
+</div>
+<% }) %>

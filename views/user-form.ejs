@@ -1,0 +1,7 @@
+<h1><%= eventName %></h1>
+<form method="POST" action="/user/new">
+  <input type="hidden" name="eventName" value="<%= eventName %>" />
+  <input name="userName" placeholder="Username" required />
+  <input name="email" placeholder="Email" required />
+  <button type="submit">Add</button>
+</form>
